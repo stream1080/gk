@@ -2,26 +2,24 @@ package main
 
 import (
 	"fmt"
-	"log"
 	"net/http"
+
+	"gkw"
 )
 
-type Engine struct{}
+func main() {
+	r := gkw.New()
 
-func (engine *Engine) ServeHTTP(w http.ResponseWriter, req *http.Request) {
-	switch req.URL.Path {
-	case "/index":
+	r.GET("/index", func(w http.ResponseWriter, req *http.Request) {
 		fmt.Fprintf(w, "URL.Path = %q\n", req.URL.Path)
-	case "/hello":
+	})
+
+	r.GET("/hello", func(w http.ResponseWriter, req *http.Request) {
 		for k, v := range req.Header {
 			fmt.Fprintf(w, "Header[%q] = %q\n", k, v)
 		}
-	default:
-		fmt.Fprintf(w, "404 NOT FOUND: %s\n", req.URL)
-	}
-}
+	})
 
-func main() {
-	engine := new(Engine)
-	log.Fatal(http.ListenAndServe(":8080", engine))
+	r.Run(":8080")
+
 }
