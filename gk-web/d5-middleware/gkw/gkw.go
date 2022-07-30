@@ -3,15 +3,17 @@ package gkw
 import (
 	"log"
 	"net/http"
+	"strings"
 )
 
 type HandlerFunc func(c *Context)
 
 type (
 	RouterGroup struct {
-		prefix string
-		parent *RouterGroup // support nesting
-		engine *Engine      // all groups share a Engine instance
+		prefix      string
+		parent      *RouterGroup  // support nesting
+		engine      *Engine       // all groups share a Engine instance
+		middlewares []HandlerFunc // support middlewares
 	}
 
 	Engine struct {
@@ -27,6 +29,11 @@ func New() *Engine {
 	engine.RouterGroup = &RouterGroup{engine: engine}
 	engine.groups = []*RouterGroup{engine.RouterGroup}
 	return engine
+}
+
+// Use is defined to add middleware to the group
+func (group *RouterGroup) Use(middlewares ...HandlerFunc) {
+	group.middlewares = append(group.middlewares, middlewares...)
 }
 
 // Group is defined to create a new RouterGroup
@@ -64,6 +71,14 @@ func (engine *Engine) Run(addr string) (err error) {
 }
 
 func (engine *Engine) ServeHTTP(w http.ResponseWriter, req *http.Request) {
+	var middlewares []HandlerFunc
+
+	for _, group := range engine.groups {
+		if strings.HasPrefix(req.URL.Path, group.prefix) {
+			middlewares = append(middlewares, group.middlewares...)
+		}
+	}
 	c := newContext(w, req)
+	c.handlers = middlewares
 	engine.router.handle(c)
 }
