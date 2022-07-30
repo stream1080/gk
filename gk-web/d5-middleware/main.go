@@ -1,13 +1,17 @@
 package main
 
 import (
+	"log"
 	"net/http"
+	"time"
 
 	"gkw"
 )
 
 func main() {
 	r := gkw.New()
+
+	r.Use(gkw.Logger())
 
 	r.GET("/index", func(c *gkw.Context) {
 		c.HTML(http.StatusOK, "<h1>Index Pages</h1>")
@@ -25,6 +29,7 @@ func main() {
 	}
 
 	v2 := r.Group("/v2")
+	v2.Use(onlyForV2())
 	{
 		v2.GET("/hello/:name", func(c *gkw.Context) {
 			c.String(http.StatusOK, "hello %s, you're at %s\n", c.Param("name"), c.Path)
@@ -43,4 +48,15 @@ func main() {
 	}
 
 	r.Run(":8080")
+}
+
+func onlyForV2() gkw.HandlerFunc {
+	return func(c *gkw.Context) {
+		// Start timer
+		t := time.Now()
+		// if a server error occurred
+		c.Fail(500, "Internal Server Error")
+		// Calculate resolution time
+		log.Printf("[%d] %s in %v for group v2", c.StatusCode, c.Req.RequestURI, time.Since(t))
+	}
 }
