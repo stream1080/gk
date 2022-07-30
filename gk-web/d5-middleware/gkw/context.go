@@ -10,11 +10,13 @@ type H map[string]interface{}
 
 type Context struct {
 	Writer     http.ResponseWriter // origin objects
-	Req        *http.Request
-	Path       string // request info
-	Method     string
-	Params     map[string]string
-	StatusCode int // response info
+	Req        *http.Request       //
+	Path       string              // request info
+	Method     string              //
+	Params     map[string]string   //
+	StatusCode int                 // response info
+	handlers   []HandlerFunc       // middleware
+	index      int                 //
 }
 
 func newContext(w http.ResponseWriter, req *http.Request) *Context {
@@ -23,6 +25,15 @@ func newContext(w http.ResponseWriter, req *http.Request) *Context {
 		Req:    req,
 		Path:   req.URL.Path,
 		Method: req.Method,
+		index:  -1,
+	}
+}
+
+func (c *Context) Next() {
+	c.index++
+	s := len(c.handlers)
+	for ; c.index < s; c.index++ {
+		c.handlers[c.index](c)
 	}
 }
 
