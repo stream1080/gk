@@ -9,6 +9,15 @@ type node struct {
 	isWild   bool    // 是否精确匹配，part 含有 : 或 * 时为true
 }
 
+func (n *node) travel(list *([]*node)) {
+	if n.pattern != "" {
+		*list = append(*list, n)
+	}
+	for _, child := range n.children {
+		child.travel(list)
+	}
+}
+
 // 第一个匹配成功的节点，用于插入
 func (n *node) matchChild(part string) *node {
 	for _, child := range n.children {
