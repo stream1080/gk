@@ -1,8 +1,8 @@
 package gkw
 
 import (
-	"log"
 	"net/http"
+	"strings"
 )
 
 type router struct {
@@ -16,7 +16,7 @@ type router struct {
 func newRouter() *router {
 	return &router{
 		roots:    make(map[string]*node),
-		handlers: make(map[string]HandlerFunc)
+		handlers: make(map[string]HandlerFunc),
 	}
 }
 
@@ -37,8 +37,8 @@ func parsePattern(pattern string) []string {
 }
 
 func (r *router) addRoute(method string, pattern string, handler HandlerFunc) {
-	parts :=parsePattern(pattern)
-	key := method +"-"+pattern
+	parts := parsePattern(pattern)
+	key := method + "-" + pattern
 	_, ok := r.roots[method]
 	if !ok {
 		r.roots[method] = &node{}
@@ -73,6 +73,16 @@ func (r *router) getRoute(method string, path string) (*node, map[string]string)
 	}
 
 	return nil, nil
+}
+
+func (r *router) getRoutes(method string) []*node {
+	root, ok := r.roots[method]
+	if !ok {
+		return nil
+	}
+	nodes := make([]*node, 0)
+	root.travel(&nodes)
+	return nodes
 }
 
 func (r *router) handler(c *Context) {
