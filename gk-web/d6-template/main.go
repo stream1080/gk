@@ -47,6 +47,10 @@ func main() {
 		})
 	}
 
+	// 静态文件访问
+	v3 := r.Group("/v3")
+	v3.Static("/assets", "./static")
+
 	r.Run(":8080")
 }
 
