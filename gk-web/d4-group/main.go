@@ -3,7 +3,7 @@ package main
 import (
 	"net/http"
 
-	"gkw"
+	"github.com/stream1080/gk/gk-web/d4-group/gkw"
 )
 
 func main() {

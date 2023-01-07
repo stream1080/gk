@@ -3,14 +3,14 @@ package main
 import (
 	"net/http"
 
-	"gkw"
+	"github.com/stream1080/gk/gk-web/d3-router/gkw"
 )
 
 func main() {
 	r := gkw.New()
 
 	r.GET("/index", func(c *gkw.Context) {
-		c.HTML(http.StatusOK, "<h1>Hello Gee</h1>")
+		c.HTML(http.StatusOK, "<h1>Hello gk-web</h1>")
 	})
 
 	r.GET("/hello", func(c *gkw.Context) {
