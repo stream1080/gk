@@ -9,11 +9,11 @@ import (
 type H map[string]interface{}
 
 type Context struct {
-	Writer     http.ResponseWriter // origin objects
-	Req        *http.Request
-	Path       string // request info
-	Method     string
-	StatusCode int // response info
+	Writer     http.ResponseWriter // 响应对象
+	Req        *http.Request       // 请求对象
+	Path       string              // 请求路径
+	Method     string              // 请求方法
+	StatusCode int                 // 状态码
 }
 
 func newContext(w http.ResponseWriter, req *http.Request) *Context {
