@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"time"
 
-	"gkw"
+	"github.com/stream1080/gk/gk-web/d5-middleware/gkw"
 )
 
 func main() {
