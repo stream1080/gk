@@ -11,7 +11,7 @@ type Engine struct {
 	router *router
 }
 
-// New is the constructor of gee.Engine
+// New is the constructor of gkw.Engine
 func New() *Engine {
 	return &Engine{router: newRouter()}
 }
