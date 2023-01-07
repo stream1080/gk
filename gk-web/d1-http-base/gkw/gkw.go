@@ -11,7 +11,7 @@ type Engine struct {
 	router map[string]HandlerFunc
 }
 
-// New is the constructor of gee.Engine
+// New is the constructor of gkw.Engine
 func New() *Engine {
 	return &Engine{router: make(map[string]HandlerFunc)}
 }

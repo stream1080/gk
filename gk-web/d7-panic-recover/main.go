@@ -81,7 +81,7 @@ func main() {
 	r.Use(gkw.Recovery())
 	// index out of range for testing Recovery()
 	r.GET("/panic", func(c *gkw.Context) {
-		names := []string{"geektutu"}
+		names := []string{"gkw"}
 		c.String(http.StatusOK, names[100])
 	})
 
