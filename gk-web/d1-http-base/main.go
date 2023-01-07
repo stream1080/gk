@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"gkw"
+	"github.com/stream1080/gk/gk-web/d1-http-base/gkw"
 )
 
 func main() {

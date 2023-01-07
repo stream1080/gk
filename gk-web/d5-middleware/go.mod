@@ -1,7 +1,5 @@
-module example
+module github.com/stream1080/gk/gk-web/d5-middleware/gkw
 
 go 1.18
 
 replace gkw => ./gkw
-
-require gkw v0.0.0-00010101000000-000000000000
