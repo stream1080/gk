@@ -20,9 +20,9 @@ type Value interface {
 }
 
 // New is the Constructor of Cache
-func New(maxBytes int64, onEvicted func(string, Value)) *Cache {
+func New(mBytes int64, onEvicted func(string, Value)) *Cache {
 	return &Cache{
-		mBytes:    maxBytes,
+		mBytes:    mBytes,
 		list:      list.New(),
 		cache:     make(map[string]*list.Element),
 		OnEvicted: onEvicted,
@@ -69,7 +69,7 @@ func (c *Cache) Add(key string, value Value) {
 		c.cache[key] = e
 		c.nBytes += int64(len(key)) + int64(value.Len())
 	}
-	//
+
 	for c.mBytes != 0 && c.mBytes < c.nBytes {
 		c.Del()
 	}
