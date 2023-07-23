@@ -27,6 +27,6 @@ func main() {
 
 	addr := "localhost:9999"
 	peers := server.NewHTTPPool(addr)
-	log.Println("geecache is running at", addr)
+	log.Println("gkcache is running at", addr)
 	log.Fatal(http.ListenAndServe(addr, peers))
 }
