@@ -10,8 +10,11 @@ import (
 	"sync"
 
 	"gk-cache/cache"
+	pb "gk-cache/cachepb"
 	"gk-cache/hash"
 	"gk-cache/peers"
+
+	"google.golang.org/protobuf/proto"
 )
 
 const (
@@ -70,8 +73,13 @@ func (p *HTTPPool) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	body, err := proto.Marshal(&pb.Response{view.ByteSlice()})
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 	w.Header().Set("Content-Type", "application/octet-stream")
-	w.Write(view.ByteSlice())
+	w.Write(body)
 }
 
 type httpGetter struct {
@@ -95,6 +103,9 @@ func (h *httpGetter) Get(group, key string) ([]byte, error) {
 	bytes, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, fmt.Errorf("reading response body: %v", err)
+	}
+	if err = proto.Unmarshal(bytes, out); err != nil {
+		return fmt.Errorf("decoding response body: %v", err)
 	}
 
 	return bytes, nil
