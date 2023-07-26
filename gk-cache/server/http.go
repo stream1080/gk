@@ -88,27 +88,33 @@ type httpGetter struct {
 
 var _PeerGetter = (*httpGetter)(nil)
 
-func (h *httpGetter) Get(group, key string) ([]byte, error) {
-	u := fmt.Sprintf("%v%v/%v", h.baseURL, url.QueryEscape(group), url.QueryEscape(key))
-	resp, err := http.Get(u)
+func (h *httpGetter) Get(in *pb.Request, out *pb.Response) error {
+	u := fmt.Sprintf(
+		"%v%v/%v",
+		h.baseURL,
+		url.QueryEscape(in.GetGroup()),
+		url.QueryEscape(in.GetKey()),
+	)
+	res, err := http.Get(u)
 	if err != nil {
-		return nil, err
+		return err
 	}
-	defer resp.Body.Close()
+	defer res.Body.Close()
 
-	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("server returned: %v", resp.Status)
+	if res.StatusCode != http.StatusOK {
+		return fmt.Errorf("server returned: %v", res.Status)
 	}
 
-	bytes, err := io.ReadAll(resp.Body)
+	bytes, err := io.ReadAll(res.Body)
 	if err != nil {
-		return nil, fmt.Errorf("reading response body: %v", err)
+		return fmt.Errorf("reading response body: %v", err)
 	}
+
 	if err = proto.Unmarshal(bytes, out); err != nil {
 		return fmt.Errorf("decoding response body: %v", err)
 	}
 
-	return bytes, nil
+	return nil
 }
 
 func (p *HTTPPool) Set(peers ...string) {
